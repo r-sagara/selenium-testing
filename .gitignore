@@ -1,0 +1,7 @@
+__pycache__
+.pytest_cache
+.env
+report.html
+style.css
+.idea
+src/**/__init__*
