@@ -1,9 +1,13 @@
 from selenium import webdriver
+from page_objects.exceptions_page import ExceptionsPageModel
+from page_objects.login_page import LoginPageModel
+from page_objects.account_page import AccountPageModel
 import pytest
+
 
 BROWSER_DRIVERS = {
     "chrome": webdriver.Chrome,
-    #"edge": webdriver.Edge
+    "edge": webdriver.Edge
 }
 
 def pytest_addoption(parser):
@@ -19,6 +23,19 @@ def pytest_addoption(parser):
 def driver(request):
     # driver_option = request.config.getoption("--browser")
     _driver = BROWSER_DRIVERS[request.param]()
-    # _driver.implicitly_wait(1)
     yield _driver
     _driver.quit()
+
+@pytest.fixture
+def LoginPage(driver):
+    page = LoginPageModel(driver)
+    yield page
+
+@pytest.fixture
+def AccountPage(driver):
+    page = AccountPageModel(driver)
+    yield page
+
+def ExceptionsPage(driver):
+    page = ExceptionsPageModel(driver)
+    yield page
