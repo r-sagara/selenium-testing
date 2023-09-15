@@ -18,7 +18,7 @@ class AccountPageModel(BasePageModel):
         assert expected_text in hello_text, f"There is no '{expected_text}' in hello message '{hello_text}'"
 
     def is_navigation_bar_displayed(self):
-        return self._is_displayed(self.__navigation)
+        return bool(self._wait_for_visibility(self.__navigation))
     
     def is_logout_link_displayed(self):
-        return self._is_displayed(self.__logout_link)
+        return bool(self._wait_for_visibility(self.__logout_link))
