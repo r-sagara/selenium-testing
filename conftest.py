@@ -16,12 +16,18 @@ def pytest_addoption(parser):
         action="store",
         default="chrome",
         help="Run tests with specified browser",
-        choices=tuple(BROWSER_DRIVERS.keys())
+        choices=(*BROWSER_DRIVERS.keys(), "all")
     )
 
-@pytest.fixture(scope='function', params=list(BROWSER_DRIVERS.keys()))
+def pytest_generate_tests(metafunc):
+    fixture_name = 'driver'
+    if fixture_name in metafunc.fixturenames:
+        driver_option = metafunc.config.getoption("--browser")
+        parameters = [*BROWSER_DRIVERS.keys()] if driver_option == "all" else [driver_option]
+        metafunc.parametrize(fixture_name, parameters, scope="function", indirect=True)
+
+@pytest.fixture(scope='function')
 def driver(request):
-    # driver_option = request.config.getoption("--browser")
     _driver = BROWSER_DRIVERS[request.param]()
     yield _driver
     _driver.quit()
@@ -29,6 +35,7 @@ def driver(request):
 @pytest.fixture
 def LoginPage(driver):
     page = LoginPageModel(driver)
+    page.open()
     yield page
 
 @pytest.fixture
@@ -36,6 +43,8 @@ def AccountPage(driver):
     page = AccountPageModel(driver)
     yield page
 
+@pytest.fixture
 def ExceptionsPage(driver):
     page = ExceptionsPageModel(driver)
+    page.open()
     yield page
